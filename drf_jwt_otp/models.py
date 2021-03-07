@@ -2,6 +2,8 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+from django_otp.models import Device
 
 
 def get_code_token_max_age():
@@ -18,6 +20,18 @@ class BaseAbstractToken(models.Model):
     class Meta:
         unique_together = ['user', 'device_persistent_id']
         abstract = True
+
+    @classmethod
+    def generate_token(cls, device: Device):
+        code_token, _ = OtpDeviceToken.objects.update_or_create(
+            user=device.user,
+            device_persistent_id=device.persistent_id,
+            defaults={
+                'valid_until': timezone.now() + timezone.timedelta(seconds=get_code_token_max_age()),
+                'uuid': uuid.uuid4()
+            }
+        )
+        return code_token.uuid
 
 
 class OtpDeviceToken(BaseAbstractToken):
