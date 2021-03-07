@@ -5,6 +5,8 @@ from django.db import models
 from django.utils import timezone
 from django_otp.models import Device
 
+from drf_jwt_otp.exceptions import ExpiredOtpDeviceToken
+
 
 def get_code_token_max_age():
     return getattr(settings, 'CODE_TOKEN_MAX_AGE', 60 * 5)
@@ -22,7 +24,7 @@ class BaseAbstractToken(models.Model):
 
     @classmethod
     def generate_token(cls, device: Device):
-        code_token, _ = OtpDeviceToken.objects.update_or_create(
+        code_token, _ = cls.objects.update_or_create(
             user=device.user,
             device_persistent_id=device.persistent_id,
             defaults={
@@ -36,7 +38,7 @@ class BaseAbstractToken(models.Model):
     def get_instance_from_uuid(cls, code_token):
         try:
             device_token = cls.objects.get(uuid=code_token)
-        except OtpDeviceToken.DoesNotExist:
+        except cls.DoesNotExist:
             pass
         else:
             if device_token.is_valid():
@@ -53,5 +55,10 @@ class OtpDeviceToken(BaseAbstractToken):
     class Meta(BaseAbstractToken.Meta):
         unique_together = ['user', 'device_persistent_id']
 
-    def is_valid(self):
-        return self.valid_until < timezone.now()
+    def is_valid(self, raise_exc=False):
+        if self.valid_until > timezone.now():
+            return True
+        else:
+            if raise_exc is True:
+                raise ExpiredOtpDeviceToken()
+        return False
