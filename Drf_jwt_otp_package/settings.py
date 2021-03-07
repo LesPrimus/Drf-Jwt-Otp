@@ -140,6 +140,7 @@ REST_FRAMEWORK = {
 # package settings
 
 USER_OTP_ENABLED = 'drf_jwt_otp.utils.user_otp_enabled'
+REMEMBER_COOKIE_NAME = 'drf_jwt_otp'
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER':

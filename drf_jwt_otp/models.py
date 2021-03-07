@@ -8,7 +8,7 @@ def get_code_token_max_age():
     return getattr(settings, 'CODE_TOKEN_MAX_AGE', 60 * 5)
 
 
-class OtpDeviceToken(models.Model):
+class BaseAbstractToken(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4)
     device_persistent_id = models.CharField(max_length=255)
@@ -17,3 +17,8 @@ class OtpDeviceToken(models.Model):
 
     class Meta:
         unique_together = ['user', 'device_persistent_id']
+        abstract = True
+
+
+class OtpDeviceToken(BaseAbstractToken):
+    pass
