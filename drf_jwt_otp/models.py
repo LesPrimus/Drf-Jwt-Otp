@@ -18,7 +18,6 @@ class BaseAbstractToken(models.Model):
     valid_until = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        unique_together = ['user', 'device_persistent_id']
         abstract = True
 
     @classmethod
@@ -35,4 +34,5 @@ class BaseAbstractToken(models.Model):
 
 
 class OtpDeviceToken(BaseAbstractToken):
-    pass
+    class Meta(BaseAbstractToken.Meta):
+        unique_together = ['user', 'device_persistent_id']
