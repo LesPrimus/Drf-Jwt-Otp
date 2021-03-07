@@ -4,7 +4,6 @@ from collections import defaultdict
 from django.utils import timezone
 from django_otp import devices_for_user
 from django_otp.models import Device
-from django_otp.plugins.otp_static.models import StaticDevice
 
 from drf_jwt_otp.models import OtpDeviceToken, get_code_token_max_age
 
