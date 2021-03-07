@@ -32,7 +32,26 @@ class BaseAbstractToken(models.Model):
         )
         return code_token.uuid
 
+    @classmethod
+    def get_instance_from_uuid(cls, code_token):
+        try:
+            device_token = cls.objects.get(uuid=code_token)
+        except OtpDeviceToken.DoesNotExist:
+            pass
+        else:
+            if device_token.is_valid():
+                return device_token
+        return None
+
+    @classmethod
+    def delete_user_instances(cls, user_id):
+        deleted = cls.objects.filter(user_id=user_id).delete()
+        return deleted
+
 
 class OtpDeviceToken(BaseAbstractToken):
     class Meta(BaseAbstractToken.Meta):
         unique_together = ['user', 'device_persistent_id']
+
+    def is_valid(self):
+        return self.valid_until < timezone.now()

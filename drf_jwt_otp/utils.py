@@ -1,8 +1,17 @@
 from collections import defaultdict
 
 from django_otp import devices_for_user
+from django_otp.models import Device
 
 from drf_jwt_otp.models import OtpDeviceToken
+
+
+def get_device_from_persistent_id(persistent_id):
+    try:
+        device = Device.from_persistent_id(persistent_id)
+    except Device.DoesNotExist:
+        device = None
+    return device
 
 
 class JwtCreateResponseOtpPayload:
