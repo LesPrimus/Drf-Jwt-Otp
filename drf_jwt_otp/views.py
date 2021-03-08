@@ -17,6 +17,7 @@ class VerifyCodeTokenView(ObtainJSONWebTokenView):
     authentication_classes = []
     permission_classes = [AllowAny]
     error_message = 'Not found'
+    error_status = status.HTTP_404_NOT_FOUND
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -33,7 +34,8 @@ class VerifyCodeTokenView(ObtainJSONWebTokenView):
                     return Response(payload, status=status.HTTP_200_OK)
                 else:
                     self.error_message = 'wrong otp code'
-        return Response({'details': self.error_message}, status=status.HTTP_404_NOT_FOUND)
+                    self.error_status = status.HTTP_400_BAD_REQUEST
+        return Response({'details': self.error_message}, status=self.error_status)
 
     @classmethod
     def get_response_data(cls, user):
