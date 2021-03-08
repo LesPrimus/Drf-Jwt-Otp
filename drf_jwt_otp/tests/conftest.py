@@ -37,8 +37,8 @@ def call_auth_endpoint(api_client):
 
 
 @pytest.fixture
-def call_verify_otp_code_endpoint(api_client):
-    endpoint = '/verify-otp-code/'
+def call_verify_code_token_endpoint(api_client):
+    endpoint = '/verify-code-token/'
 
     def _call_verify_otp_code_endpoint(credentials):
         res = api_client.post(endpoint, credentials)

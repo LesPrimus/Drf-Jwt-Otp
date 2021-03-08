@@ -1,3 +1,4 @@
+from django_otp.models import Device
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -5,7 +6,6 @@ from rest_framework_jwt.views import ObtainJSONWebTokenView
 
 from drf_jwt_otp.models import OtpDeviceToken
 from drf_jwt_otp.serializers import JsonWebTokenOtpSerializer, VerifyCodeTokenSerializer
-from drf_jwt_otp.utils import get_device_from_persistent_id
 
 
 class JsonWebTokenOtpView(ObtainJSONWebTokenView):
@@ -25,7 +25,7 @@ class VerifyCodeTokenView(ObtainJSONWebTokenView):
         otp_code = serializer.validated_data.get("otp_code")
         device_token = OtpDeviceToken.get_instance_from_uuid(code_token)
         if device_token and device_token.is_valid(raise_exc=False):
-            device = get_device_from_persistent_id(device_token.persistent_id)
+            device = Device.from_persistent_id(device_token.device_persistent_id)
             if device:
                 if device.verify_token(otp_code):
                     OtpDeviceToken.delete_user_instances(device.user_id)
