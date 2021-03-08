@@ -10,3 +10,28 @@ Callable used to determine if user is otp.
 ```python
 USER_OTP_ENABLED = 'drf_jwt_otp.utils.user_otp_enabled'
 ```
+### First
+
+```json
+POST http://localhost:8000/api-token-auth-otp {"username": "John", "password": "secret"}
+```
+### Response
+```json
+{
+    "StaticDevice": [
+        {
+            "name": "default",
+            "code_token": "5e7518a2-d858-4f1b-976a-3d9540fe6c06"
+        }
+    ]
+}
+```
+
+### Second
+```json
+POST http://localhost:8000/verify-code-token/ {"code_token": "5e7518a2-d858-4f1b-976a-3d9540fe6c06", "otp_code": "654321"}
+```
+### Response
+```json
+{"token": <JWT Token>}
+```
