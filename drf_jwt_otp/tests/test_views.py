@@ -24,13 +24,12 @@ def check_response_data(response_data, device):
 
 @pytest.mark.django_db
 class TestJsonWebTokenOtpView:
+    credentials = {'username': 'John', 'password': 'secret'}
 
     def test_no_otp_user_return_jwt(self, user, call_auth_endpoint):
-        data = {'username': 'John', 'password': 'secret'}
-        res = call_auth_endpoint(data)
+        res = call_auth_endpoint(self.credentials)
         assert 'token' in res.data
 
     def test_otp_user_return_custom_payload(self, otp_user, call_auth_endpoint):
-        data = {'username': 'John', 'password': 'secret'}
-        res = call_auth_endpoint(data)
+        res = call_auth_endpoint(self.credentials)
         check_response_data(res.data, otp_user.device)
