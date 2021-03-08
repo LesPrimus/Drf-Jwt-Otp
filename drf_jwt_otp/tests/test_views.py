@@ -51,7 +51,6 @@ class TestVerifyCodeTokenView(BaseTestView):
     ):
         code_token_uuid = OtpDeviceToken.generate_token(otp_user.device)
         data = {'code_token': code_token_uuid, 'otp_code': 123456}
-        monkeypatch.setattr(StaticDevice, 'verify_token', lambda _, __: True)
-        monkeypatch.setattr(TOTPDevice, 'verify_token', lambda _, __: True)
+        monkeypatch.setattr(otp_user.device.__class__, 'verify_token', lambda _, __: True)
         res = call_verify_code_token_endpoint(data)
         assert 'token' in res.data
