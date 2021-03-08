@@ -33,5 +33,5 @@ POST http://localhost:8000/verify-code-token/ {"code_token": "5e7518a2-d858-4f1b
 ```
 ### Response
 ```json
-{"token": <JWT Token>}
+{"token": "<JWT Token>"}
 ```
