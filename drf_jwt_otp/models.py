@@ -50,11 +50,6 @@ class BaseAbstractToken(models.Model):
         deleted = cls.objects.filter(user_id=user_id).delete()
         return deleted
 
-
-class OtpDeviceToken(BaseAbstractToken):
-    class Meta(BaseAbstractToken.Meta):
-        unique_together = ['user', 'device_persistent_id']
-
     def is_valid(self, raise_exc=False):
         if self.valid_until > timezone.now():
             return True
@@ -62,3 +57,12 @@ class OtpDeviceToken(BaseAbstractToken):
             if raise_exc is True:
                 raise ExpiredOtpDeviceToken()
         return False
+
+
+class OtpDeviceToken(BaseAbstractToken):
+    class Meta(BaseAbstractToken.Meta):
+        unique_together = ['user', 'device_persistent_id']
+
+
+class RememberDeviceToken(BaseAbstractToken):
+    pass
