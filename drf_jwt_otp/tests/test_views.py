@@ -1,3 +1,4 @@
+import uuid
 from unittest import mock
 
 import pytest
@@ -53,4 +54,16 @@ class TestVerifyCodeTokenView(BaseTestView):
         data = {'code_token': code_token_uuid, 'otp_code': 123456}
         monkeypatch.setattr(otp_user.device.__class__, 'verify_token', lambda _, __: True)
         res = call_verify_code_token_endpoint(data)
+        assert res.status_code == 200
         assert 'token' in res.data
+
+    def test_invalid_code_token_return_not_found(
+            self,
+            otp_user,
+            call_verify_code_token_endpoint,
+    ):
+        code_token_uuid = uuid.uuid4()
+        data = {'code_token': code_token_uuid, 'otp_code': 123456}
+        res = call_verify_code_token_endpoint(data)
+        assert 'token' not in res.data
+        assert res.status_code == 404
