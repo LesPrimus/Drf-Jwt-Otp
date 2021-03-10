@@ -25,7 +25,7 @@ class VerifyCodeTokenView(ObtainJSONWebTokenView):
         code_token = serializer.validated_data.get("code_token")
         otp_code = serializer.validated_data.get("otp_code")
         device_token = OtpDeviceToken.get_instance_from_uuid(code_token)
-        if device_token and device_token.is_valid(raise_exc=False):
+        if device_token and device_token.is_valid():
             device = Device.from_persistent_id(device_token.device_persistent_id)
             if device:
                 if device.verify_token(otp_code):
