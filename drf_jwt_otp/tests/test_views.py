@@ -1,8 +1,9 @@
 import uuid
 
 import pytest
+from django.conf import settings
 
-from drf_jwt_otp.models import OtpDeviceToken
+from drf_jwt_otp.models import OtpDeviceToken, RememberDeviceToken
 
 
 @pytest.mark.django_db
@@ -67,3 +68,14 @@ class TestVerifyCodeTokenView(BaseTestView):
         res = call_verify_code_token_endpoint(data)
         assert res.status_code == 400
         assert 'token' not in res.data
+
+
+class TestRememberDeviceToken(BaseTestView):
+    endpoint = '/api-token-auth-otp/'
+
+    def test_remember_cookie_in_request_return_jwt(self, otp_user, api_client):
+        device = otp_user.device
+        cookie_value = RememberDeviceToken.generate_token(device)
+        api_client.cookies[settings.REMEMBER_COOKIE_NAME] = cookie_value
+        res = api_client.post(self.endpoint, self.credentials)
+        assert 'token' in res.data
